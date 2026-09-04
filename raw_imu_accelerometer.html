@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raw IMU Accelerometer</title>
+<style>
+body{font-family:Arial,sans-serif;text-align:center;background:#f2f2f2;margin:0;padding:20px}
+h1{margin-bottom:25px}.sensor-container{display:flex;justify-content:center;gap:15px;flex-wrap:wrap}
+.sensor{background:white;width:180px;padding:20px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.sensor h2{margin:0 0 10px}.value{font-size:28px;font-weight:bold}
+button{margin:25px 10px;padding:12px 25px;font-size:18px;border:none;border-radius:8px;cursor:pointer}
+#start{background:#28a745;color:white}#stop{background:#dc3545;color:white}
+table{margin:20px auto;border-collapse:collapse;background:white;width:90%}
+th,td{border:1px solid #ccc;padding:8px}th{background:#ddd}
+</style>
+</head>
+<body>
+<h1>Raw IMU Accelerometer</h1>
+<div class="sensor-container">
+<div class="sensor"><h2>X Axis</h2><div class="value" id="accX">0.000</div><p>m/s²</p></div>
+<div class="sensor"><h2>Y Axis</h2><div class="value" id="accY">0.000</div><p>m/s²</p></div>
+<div class="sensor"><h2>Z Axis</h2><div class="value" id="accZ">0.000</div><p>m/s²</p></div>
+</div>
+<button id="start">START</button><button id="stop">STOP</button>
+<h2>Recorded Data</h2>
+<table><thead><tr><th>Time (s)</th><th>X (m/s²)</th><th>Y (m/s²)</th><th>Z (m/s²)</th></tr></thead>
+<tbody id="dataTable"></tbody></table>
+<script>
+let running=false,startTime=0;
+document.getElementById("start").addEventListener("click",async()=>{
+try{
+if(typeof DeviceMotionEvent!=="undefined"&&typeof DeviceMotionEvent.requestPermission==="function"){
+const permission=await DeviceMotionEvent.requestPermission();
+if(permission!=="granted"){alert("Motion sensor permission denied.");return;}
+}
+running=true;startTime=performance.now();
+window.addEventListener("devicemotion",handleMotion);
+}catch(error){alert("Could not access motion sensor: "+error);}
+});
+document.getElementById("stop").addEventListener("click",()=>{
+running=false;window.removeEventListener("devicemotion",handleMotion);
+});
+function handleMotion(event){
+if(!running)return;
+const a=event.accelerationIncludingGravity;if(!a)return;
+const x=a.x??0,y=a.y??0,z=a.z??0;
+document.getElementById("accX").textContent=x.toFixed(3);
+document.getElementById("accY").textContent=y.toFixed(3);
+document.getElementById("accZ").textContent=z.toFixed(3);
+const time=(performance.now()-startTime)/1000;
+const row=document.createElement("tr");
+row.innerHTML=`<td>${time.toFixed(3)}</td><td>${x.toFixed(3)}</td><td>${y.toFixed(3)}</td><td>${z.toFixed(3)}</td>`;
+document.getElementById("dataTable").appendChild(row);
+}
+</script>
+</body>
+</html>
