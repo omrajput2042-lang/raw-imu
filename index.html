@@ -3,230 +3,856 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Raw IMU Accelerometer - 100 Hz Logger</title>
+
 <style>
-*{box-sizing:border-box}
-body{font-family:Arial,sans-serif;text-align:center;background:#f2f2f2;margin:0;padding:20px;color:#222}
-h1{margin-bottom:8px}
-.status{margin:8px auto 20px;font-weight:bold}
-.sensor-container{display:flex;justify-content:center;gap:15px;flex-wrap:wrap}
-.sensor{background:white;width:180px;padding:20px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.15)}
-.sensor h2{margin:0 0 10px}
-.value{font-size:32px;font-weight:bold;font-variant-numeric:tabular-nums}
-.unit{margin:8px 0 0;color:#666}
-.buttons{margin:25px 0;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-button{padding:13px 24px;font-size:17px;border:0;border-radius:8px;cursor:pointer;min-width:130px}
-#start{background:#28a745;color:white}
-#stop{background:#dc3545;color:white}
-#download{background:#007bff;color:white}
-button:disabled{opacity:.45;cursor:not-allowed}
-.info{background:white;padding:12px;border-radius:10px;max-width:700px;margin:0 auto 20px}
-table{margin:20px auto;border-collapse:collapse;background:white;width:100%;max-width:700px}
-th,td{border:1px solid #ccc;padding:7px;font-variant-numeric:tabular-nums}
-th{background:#ddd}
-#tableWrap{max-height:360px;overflow:auto}
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 20px;
+    color: #222;
+}
+
+h1 {
+    margin-bottom: 8px;
+}
+
+.status {
+    margin: 8px auto 20px;
+    font-weight: bold;
+}
+
+.sensor-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.sensor {
+    background: white;
+    width: 180px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.sensor h2 {
+    margin: 0 0 10px;
+}
+
+.value {
+    font-size: 32px;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+}
+
+.unit {
+    margin: 8px 0 0;
+    color: #666;
+}
+
+.buttons {
+    margin: 25px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 13px 24px;
+    font-size: 17px;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    min-width: 130px;
+}
+
+#start {
+    background: #28a745;
+    color: white;
+}
+
+#stop {
+    background: #dc3545;
+    color: white;
+}
+
+#download {
+    background: #007bff;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.info {
+    background: white;
+    padding: 12px;
+    border-radius: 10px;
+    max-width: 700px;
+    margin: 0 auto 20px;
+}
+
+table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: white;
+    width: 100%;
+    max-width: 700px;
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 7px;
+    font-variant-numeric: tabular-nums;
+}
+
+th {
+    background: #ddd;
+}
+
+#tableWrap {
+    max-height: 360px;
+    overflow: auto;
+}
 </style>
+
 </head>
+
 <body>
 
 <h1>Raw IMU Accelerometer</h1>
-<div class="status" id="status">Stopped</div>
+
+<div class="status" id="status">
+    Stopped
+</div>
+
 
 <div class="sensor-container">
-  <div class="sensor">
-    <h2>X Axis</h2>
-    <div class="value" id="accX">0.00</div>
-    <div class="unit">m/s²</div>
-  </div>
-  <div class="sensor">
-    <h2>Y Axis</h2>
-    <div class="value" id="accY">0.00</div>
-    <div class="unit">m/s²</div>
-  </div>
-  <div class="sensor">
-    <h2>Z Axis</h2>
-    <div class="value" id="accZ">0.00</div>
-    <div class="unit">m/s²</div>
-  </div>
+
+    <div class="sensor">
+
+        <h2>X Axis</h2>
+
+        <div class="value" id="accX">
+            0.00
+        </div>
+
+        <div class="unit">
+            m/s²
+        </div>
+
+    </div>
+
+
+    <div class="sensor">
+
+        <h2>Y Axis</h2>
+
+        <div class="value" id="accY">
+            0.00
+        </div>
+
+        <div class="unit">
+            m/s²
+        </div>
+
+    </div>
+
+
+    <div class="sensor">
+
+        <h2>Z Axis</h2>
+
+        <div class="value" id="accZ">
+            0.00
+        </div>
+
+        <div class="unit">
+            m/s²
+        </div>
+
+    </div>
+
 </div>
+
 
 <div class="info">
-  <div>Samples logged: <b id="sampleCount">0</b></div>
-  <div>Logger rate: <b>100 Hz</b> (one CSV row every 10 ms)</div>
-  <div>Time: <b>milliseconds</b></div>
+
+    <div>
+        Samples logged:
+        <b id="sampleCount">0</b>
+    </div>
+
+    <div>
+        Logger rate:
+        <b>100 Hz</b>
+        (one CSV row every 10 ms)
+    </div>
+
+    <div>
+        Time:
+        <b>milliseconds</b>
+    </div>
+
 </div>
+
 
 <div class="buttons">
-  <button id="start">START LOGGING</button>
-  <button id="stop" disabled>STOP LOGGING</button>
-  <button id="download" disabled>DOWNLOAD CSV</button>
+
+    <button id="start">
+        START LOGGING
+    </button>
+
+    <button id="stop" disabled>
+        STOP LOGGING
+    </button>
+
+    <button id="download" disabled>
+        DOWNLOAD CSV
+    </button>
+
 </div>
+
 
 <div id="tableWrap">
+
 <table>
+
 <thead>
+
 <tr>
-  <th>Time (ms)</th>
-  <th>X (m/s²)</th>
-  <th>Y (m/s²)</th>
-  <th>Z (m/s²)</th>
+
+<th>Time (ms)</th>
+
+<th>X (m/s²)</th>
+
+<th>Y (m/s²)</th>
+
+<th>Z (m/s²)</th>
+
 </tr>
+
 </thead>
-<tbody id="dataTable"></tbody>
+
+<tbody id="dataTable">
+</tbody>
+
 </table>
+
 </div>
 
+
 <script>
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
 let sensorRunning = false;
+
 let logging = false;
+
 let startTime = 0;
+
 let logTimer = null;
+
 let sampleCount = 0;
+
 let csvRows = [];
-let latest = {x: 0, y: 0, z: 0};
+
+let latest = {
+    x: 0,
+    y: 0,
+    z: 0
+};
+
 let gotSensorData = false;
 
-const accX = document.getElementById("accX");
-const accY = document.getElementById("accY");
-const accZ = document.getElementById("accZ");
-const statusEl = document.getElementById("status");
-const sampleCountEl = document.getElementById("sampleCount");
-const dataTable = document.getElementById("dataTable");
-const startBtn = document.getElementById("start");
-const stopBtn = document.getElementById("stop");
-const downloadBtn = document.getElementById("download");
+
+/* =====================================================
+   HTML ELEMENTS
+===================================================== */
+
+const accX =
+    document.getElementById("accX");
+
+const accY =
+    document.getElementById("accY");
+
+const accZ =
+    document.getElementById("accZ");
+
+const statusEl =
+    document.getElementById("status");
+
+const sampleCountEl =
+    document.getElementById("sampleCount");
+
+const dataTable =
+    document.getElementById("dataTable");
+
+const startBtn =
+    document.getElementById("start");
+
+const stopBtn =
+    document.getElementById("stop");
+
+const downloadBtn =
+    document.getElementById("download");
+
+
+/* =====================================================
+   UPDATE DISPLAY
+===================================================== */
 
 function updateDisplay(x, y, z) {
-  accX.textContent = Number(x).toFixed(2);
-  accY.textContent = Number(y).toFixed(2);
-  accZ.textContent = Number(z).toFixed(2);
+
+    accX.textContent =
+        Number(x).toFixed(2);
+
+    accY.textContent =
+        Number(y).toFixed(2);
+
+    accZ.textContent =
+        Number(z).toFixed(2);
+
 }
+
+
+/* =====================================================
+   DEVICE MOTION EVENT
+===================================================== */
 
 function handleMotion(event) {
-  const a = event.accelerationIncludingGravity;
-  if (!a) return;
 
-  latest.x = Number.isFinite(a.x) ? a.x : 0;
-  latest.y = Number.isFinite(a.y) ? a.y : 0;
-  latest.z = Number.isFinite(a.z) ? a.z : 0;
+    /*
+       PRINT COMPLETE EVENT
+       TO BROWSER CONSOLE
+    */
 
-  gotSensorData = true;
-  updateDisplay(latest.x, latest.y, latest.z);
+    console.log("DeviceMotion Event:", event);
+
+
+    /*
+       ACCELERATION INCLUDING GRAVITY
+    */
+
+    const a =
+        event.accelerationIncludingGravity;
+
+
+    if (!a) {
+
+        console.log(
+            "No accelerationIncludingGravity data"
+        );
+
+        return;
+    }
+
+
+    /*
+       X
+    */
+
+    latest.x =
+        Number.isFinite(a.x)
+        ? a.x
+        : 0;
+
+
+    /*
+       Y
+    */
+
+    latest.y =
+        Number.isFinite(a.y)
+        ? a.y
+        : 0;
+
+
+    /*
+       Z
+    */
+
+    latest.z =
+        Number.isFinite(a.z)
+        ? a.z
+        : 0;
+
+
+    gotSensorData = true;
+
+
+    /*
+       UPDATE SCREEN CONTINUOUSLY
+    */
+
+    updateDisplay(
+        latest.x,
+        latest.y,
+        latest.z
+    );
+
+
+    /*
+       PRINT RAW VALUES
+    */
+
+    console.log(
+        "RAW ACC:",
+        "X =", latest.x,
+        "Y =", latest.y,
+        "Z =", latest.z
+    );
+
 }
+
+
+/* =====================================================
+   100 Hz LOGGER
+===================================================== */
 
 function addSample() {
-  if (!logging) return;
 
-  const elapsedMs = performance.now() - startTime;
-  const timeMs = elapsedMs.toFixed(2);
-  const x = latest.x.toFixed(2);
-  const y = latest.y.toFixed(2);
-  const z = latest.z.toFixed(2);
+    if (!logging) {
+        return;
+    }
 
-  csvRows.push(`${timeMs},${x},${y},${z}`);
-  sampleCount++;
-  sampleCountEl.textContent = sampleCount;
 
-  // Keep the visible table bounded so long recordings don't freeze the page.
-  if (sampleCount <= 500) {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td>${timeMs}</td><td>${x}</td><td>${y}</td><td>${z}</td>`;
-    dataTable.appendChild(row);
-  } else if (sampleCount === 501) {
-    dataTable.innerHTML = "";
-    const row = document.createElement("tr");
-    row.innerHTML = `<td colspan="4">Recording continues. Download CSV for all samples.</td>`;
-    dataTable.appendChild(row);
-  }
+    /*
+       TIME IN MILLISECONDS
+    */
+
+    const elapsedMs =
+        performance.now() - startTime;
+
+
+    const timeMs =
+        elapsedMs.toFixed(2);
+
+
+    /*
+       ACCELERATION
+    */
+
+    const x =
+        latest.x.toFixed(2);
+
+    const y =
+        latest.y.toFixed(2);
+
+    const z =
+        latest.z.toFixed(2);
+
+
+    /*
+       ADD CSV ROW
+    */
+
+    csvRows.push(
+        `${timeMs},${x},${y},${z}`
+    );
+
+
+    sampleCount++;
+
+
+    sampleCountEl.textContent =
+        sampleCount;
+
+
+    /*
+       DISPLAY FIRST 500 ROWS
+    */
+
+    if (sampleCount <= 500) {
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+            <td>${timeMs}</td>
+            <td>${x}</td>
+            <td>${y}</td>
+            <td>${z}</td>
+        `;
+
+
+        dataTable.appendChild(row);
+
+    }
+
+
+    else if (sampleCount === 501) {
+
+        dataTable.innerHTML = "";
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+            <td colspan="4">
+                Recording continues.
+                Download CSV for all samples.
+            </td>
+        `;
+
+
+        dataTable.appendChild(row);
+
+    }
+
 }
+
+
+/* =====================================================
+   SENSOR PERMISSION
+===================================================== */
 
 async function requestMotionPermission() {
-  if (typeof DeviceMotionEvent === "undefined") {
-    throw new Error("This browser does not support device motion sensors.");
-  }
 
-  if (typeof DeviceMotionEvent.requestPermission === "function") {
-    const permission = await DeviceMotionEvent.requestPermission();
-    if (permission !== "granted") {
-      throw new Error("Motion sensor permission was denied.");
+    if (
+        typeof DeviceMotionEvent ===
+        "undefined"
+    ) {
+
+        throw new Error(
+            "This browser does not support device motion sensors."
+        );
+
     }
-  }
+
+
+    /*
+       iPhone / iPad
+    */
+
+    if (
+        typeof DeviceMotionEvent.requestPermission ===
+        "function"
+    ) {
+
+        const permission =
+            await DeviceMotionEvent.requestPermission();
+
+
+        if (permission !== "granted") {
+
+            throw new Error(
+                "Motion sensor permission was denied."
+            );
+
+        }
+
+    }
+
 }
 
-startBtn.addEventListener("click", async () => {
-  try {
-    await requestMotionPermission();
 
-    if (!sensorRunning) {
-      window.addEventListener("devicemotion", handleMotion, {passive:true});
-      sensorRunning = true;
+/* =====================================================
+   START LOGGING
+===================================================== */
+
+startBtn.addEventListener(
+    "click",
+    async () => {
+
+        try {
+
+            await requestMotionPermission();
+
+
+            /*
+               ADD SENSOR EVENT LISTENER
+            */
+
+            if (!sensorRunning) {
+
+                window.addEventListener(
+                    "devicemotion",
+                    handleMotion,
+                    {
+                        passive: true
+                    }
+                );
+
+                sensorRunning = true;
+
+            }
+
+
+            /*
+               RESET DATA
+            */
+
+            csvRows = [];
+
+            sampleCount = 0;
+
+            sampleCountEl.textContent =
+                "0";
+
+            dataTable.innerHTML = "";
+
+
+            latest = {
+                x: 0,
+                y: 0,
+                z: 0
+            };
+
+
+            gotSensorData = false;
+
+
+            /*
+               START TIME
+            */
+
+            startTime =
+                performance.now();
+
+
+            logging = true;
+
+
+            /*
+               100 Hz
+
+               100 samples / second
+
+               1 second = 1000 ms
+
+               1000 / 100 = 10 ms
+            */
+
+            logTimer =
+                setInterval(
+                    addSample,
+                    10
+                );
+
+
+            startBtn.disabled = true;
+
+            stopBtn.disabled = false;
+
+            downloadBtn.disabled = true;
+
+
+            statusEl.textContent =
+                "Recording at 100 Hz...";
+
+
+            console.log(
+                "========== IMU LOGGING STARTED =========="
+            );
+
+            console.log(
+                "Logger frequency: 100 Hz"
+            );
+
+            console.log(
+                "Logger interval: 10 ms"
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Sensor error:",
+                error
+            );
+
+            alert(
+                error.message
+            );
+
+        }
+
     }
+);
 
-    csvRows = [];
-    sampleCount = 0;
-    sampleCountEl.textContent = "0";
-    dataTable.innerHTML = "";
-    latest = {x:0, y:0, z:0};
-    gotSensorData = false;
 
-    startTime = performance.now();
-    logging = true;
+/* =====================================================
+   STOP LOGGING
+===================================================== */
 
-    // Exact 100 Hz logger: one sample every 10 ms.
-    logTimer = setInterval(addSample, 10);
+stopBtn.addEventListener(
+    "click",
+    () => {
 
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    downloadBtn.disabled = true;
-    statusEl.textContent = "Recording at 100 Hz...";
+        logging = false;
 
-    // Give the browser a moment to deliver the first sensor event.
-    setTimeout(() => {
-      if (!gotSensorData && logging) {
-        statusEl.textContent = "Recording — waiting for sensor data...";
-      }
-    }, 1000);
 
-  } catch (error) {
-    alert(error.message);
-  }
-});
+        if (logTimer !== null) {
 
-stopBtn.addEventListener("click", () => {
-  logging = false;
+            clearInterval(
+                logTimer
+            );
 
-  if (logTimer !== null) {
-    clearInterval(logTimer);
-    logTimer = null;
-  }
+            logTimer = null;
 
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
-  downloadBtn.disabled = csvRows.length === 0;
-  statusEl.textContent = `Stopped — ${sampleCount} samples recorded`;
-});
+        }
 
-downloadBtn.addEventListener("click", () => {
-  if (csvRows.length === 0) return;
 
-  const csv = "Time (ms),X (m/s²),Y (m/s²),Z (m/s²)\n" + csvRows.join("\n");
-  const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+        startBtn.disabled = false;
 
-  link.href = url;
-  link.download = `imu_raw_${new Date().toISOString().replace(/[:.]/g,"-")}.csv`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
+        stopBtn.disabled = true;
 
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-});
+        downloadBtn.disabled =
+            csvRows.length === 0;
 
-window.addEventListener("beforeunload", () => {
-  if (logTimer !== null) clearInterval(logTimer);
-  window.removeEventListener("devicemotion", handleMotion);
-});
+
+        statusEl.textContent =
+            `Stopped — ${sampleCount} samples recorded`;
+
+
+        console.log(
+            "========== IMU LOGGING STOPPED =========="
+        );
+
+        console.log(
+            "Total samples:",
+            sampleCount
+        );
+
+    }
+);
+
+
+/* =====================================================
+   DOWNLOAD CSV
+===================================================== */
+
+downloadBtn.addEventListener(
+    "click",
+    () => {
+
+        if (csvRows.length === 0) {
+            return;
+        }
+
+
+        /*
+           CSV HEADER
+        */
+
+        const csv =
+            "Time (ms),X (m/s²),Y (m/s²),Z (m/s²)\n" +
+            csvRows.join("\n");
+
+
+        /*
+           CREATE FILE
+        */
+
+        const blob =
+            new Blob(
+                [csv],
+                {
+                    type:
+                        "text/csv;charset=utf-8"
+                }
+            );
+
+
+        const url =
+            URL.createObjectURL(blob);
+
+
+        const link =
+            document.createElement("a");
+
+
+        link.href = url;
+
+
+        link.download =
+            `imu_raw_${new Date()
+                .toISOString()
+                .replace(/[:.]/g, "-")
+            }.csv`;
+
+
+        document.body.appendChild(
+            link
+        );
+
+
+        link.click();
+
+
+        link.remove();
+
+
+        /*
+           CORRECT FUNCTION
+        */
+
+        setTimeout(
+            () => {
+
+                URL.revokeObjectURL(
+                    url
+                );
+
+            },
+            1000
+        );
+
+
+        console.log(
+            "CSV downloaded."
+        );
+
+    }
+);
+
+
+/* =====================================================
+   CLEANUP
+===================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        if (logTimer !== null) {
+
+            clearInterval(
+                logTimer
+            );
+
+        }
+
+
+        window.removeEventListener(
+            "devicemotion",
+            handleMotion
+        );
+
+    }
+);
+
 </script>
 
 </body>
