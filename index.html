@@ -192,7 +192,7 @@ DOWNLOAD CSV
 <script>
 /* =====================================================
 VARIABLES
-===================================================== /
+===================================================== */
 let sensorRunning = false;
 let logging = false;
 let startTime = 0;
@@ -208,7 +208,7 @@ let gotSensorData = false;
 
 /* =====================================================
 HTML ELEMENTS
-===================================================== /
+===================================================== */
 const accX =
 document.getElementById("accX");
 const accY =
@@ -230,7 +230,7 @@ document.getElementById("download");
 
 /* =====================================================
 UPDATE DISPLAY
-===================================================== /
+===================================================== */
 function updateDisplay(x, y, z) {
 accX.textContent =
 Number(x).toPrecision(15);
@@ -242,17 +242,17 @@ Number(z).toPrecision(15);
 
 /* =====================================================
 DEVICE MOTION EVENT
-===================================================== /
+===================================================== */
 function handleMotion(event) {
 /*
 PRINT COMPLETE EVENT
 TO BROWSER CONSOLE
-/
+*/
 console.log("DeviceMotion Event:", event);
 
 /*
 ACCELERATION INCLUDING GRAVITY
-/
+*/
 const a =
 event.accelerationIncludingGravity;
 
@@ -265,7 +265,7 @@ return;
 
 /*
 X
-/
+*/
 latest.x =
 Number.isFinite(a.x)
 ? a.x
@@ -273,7 +273,7 @@ Number.isFinite(a.x)
 
 /*
 Y
-/
+*/
 latest.y =
 Number.isFinite(a.y)
 ? a.y
@@ -281,7 +281,7 @@ Number.isFinite(a.y)
 
 /*
 Z
-/
+*/
 latest.z =
 Number.isFinite(a.z)
 ? a.z
@@ -291,7 +291,7 @@ gotSensorData = true;
 
 /*
 UPDATE SCREEN CONTINUOUSLY
-/
+*/
 updateDisplay(
 latest.x,
 latest.y,
@@ -300,7 +300,7 @@ latest.z
 
 /*
 PRINT RAW VALUES
-/
+*/
 console.log(
 "RAW ACC:",
 "X =", latest.x,
@@ -311,7 +311,7 @@ console.log(
 
 /* =====================================================
 100 Hz LOGGER
-===================================================== /
+===================================================== */
 function addSample() {
 if (!logging) {
 return;
@@ -319,7 +319,7 @@ return;
 
 /*
 TIME IN MILLISECONDS
-/
+*/
 const elapsedMs =
 performance.now() - startTime;
 
@@ -328,7 +328,7 @@ elapsedMs.toFixed(2);
 
 /*
 ACCELERATION
-/
+*/
 const x =
 String(latest.x);
 const y =
@@ -338,7 +338,7 @@ String(latest.z);
 
 /*
 ADD CSV ROW
-/
+*/
 csvRows.push(
 `${timeMs},${x},${y},${z}`
 );
@@ -350,7 +350,7 @@ sampleCount;
 
 /*
 DISPLAY FIRST 500 ROWS
-/
+*/
 if (sampleCount <= 500) {
 const row =
 document.createElement("tr");
@@ -384,7 +384,7 @@ dataTable.appendChild(row);
 
 /* =====================================================
 SENSOR PERMISSION
-===================================================== /
+===================================================== */
 async function requestMotionPermission() {
 if (
 typeof DeviceMotionEvent ===
@@ -397,7 +397,7 @@ throw new Error(
 
 /*
 iPhone / iPad
-/
+*/
 if (
 typeof DeviceMotionEvent.requestPermission ===
 "function"
@@ -415,7 +415,7 @@ throw new Error(
 
 /* =====================================================
 START LOGGING
-===================================================== /
+===================================================== */
 startBtn.addEventListener(
 "click",
 async () => {
@@ -424,7 +424,7 @@ await requestMotionPermission();
 
 /*
 ADD SENSOR EVENT LISTENER
-/
+*/
 if (!sensorRunning) {
 window.addEventListener(
 "devicemotion",
@@ -438,7 +438,7 @@ sensorRunning = true;
 
 /*
 RESET DATA
-/
+*/
 csvRows = [];
 sampleCount = 0;
 sampleCountEl.textContent =
@@ -455,7 +455,7 @@ gotSensorData = false;
 
 /*
 START TIME
-/
+*/
 startTime =
 performance.now();
 
@@ -466,7 +466,7 @@ logging = true;
 100 samples / second
 1 second = 1000 ms
 1000 / 100 = 10 ms
-/
+*/
 logTimer =
 setInterval(
 addSample,
@@ -504,7 +504,7 @@ error.message
 
 /* =====================================================
 STOP LOGGING
-===================================================== /
+===================================================== */
 stopBtn.addEventListener(
 "click",
 () => {
@@ -537,7 +537,7 @@ sampleCount
 
 /* =====================================================
 DOWNLOAD CSV
-===================================================== /
+===================================================== */
 downloadBtn.addEventListener(
 "click",
 () => {
@@ -547,7 +547,7 @@ return;
 
 /*
 CSV HEADER
-/
+*/
 const csv =
 "Time (ms),X (m/s²),Y (m/s²),Z (m/s²)
 " +
@@ -556,7 +556,7 @@ csvRows.join("
 
 /*
 CREATE FILE
-/
+*/
 const blob =
 new Blob(
 [csv],
@@ -590,7 +590,7 @@ link.remove();
 
 /*
 CORRECT FUNCTION
-/
+*/
 setTimeout(
 () => {
 URL.revokeObjectURL(
@@ -608,7 +608,7 @@ console.log(
 
 /* =====================================================
 CLEANUP
-===================================================== /
+===================================================== */
 window.addEventListener(
 "beforeunload",
 () => {
@@ -625,7 +625,7 @@ handleMotion
 }
 );
 
-/* SENSOR RESOLUTION TEST /
+/* SENSOR RESOLUTION TEST */
 const resolutionStartBtn = document.getElementById("resolutionStart");
 const resolutionClearBtn = document.getElementById("resolutionClear");
 const resolutionSamplesEl = document.getElementById("resolutionSamples");
