@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -113,7 +114,6 @@ overflow: auto;
 <div class="status" id="status">
 Stopped
 </div>
-
 <div class="sensor-container">
 <div class="sensor">
 <h2>X Axis</h2>
@@ -124,7 +124,6 @@ Stopped
 m/s²
 </div>
 </div>
-
 <div class="sensor">
 <h2>Y Axis</h2>
 <div class="value" id="accY">
@@ -134,7 +133,6 @@ m/s²
 m/s²
 </div>
 </div>
-
 <div class="sensor">
 <h2>Z Axis</h2>
 <div class="value" id="accZ">
@@ -145,7 +143,6 @@ m/s²
 </div>
 </div>
 </div>
-
 <div class="info">
 <div>
 Samples logged:
@@ -161,7 +158,6 @@ Time:
 <b>milliseconds</b>
 </div>
 </div>
-
 <div class="buttons">
 <button id="start">
 START LOGGING
@@ -173,7 +169,6 @@ STOP LOGGING
 DOWNLOAD CSV
 </button>
 </div>
-
 <div id="tableWrap">
 <table>
 <thead>
@@ -188,11 +183,7 @@ DOWNLOAD CSV
 </tbody>
 </table>
 </div>
-
 <script>
-/* =====================================================
-VARIABLES
-===================================================== */
 let sensorRunning = false;
 let logging = false;
 let startTime = 0;
@@ -205,10 +196,6 @@ y: 0,
 z: 0
 };
 let gotSensorData = false;
-
-/* =====================================================
-HTML ELEMENTS
-===================================================== */
 const accX =
 document.getElementById("accX");
 const accY =
@@ -227,10 +214,6 @@ const stopBtn =
 document.getElementById("stop");
 const downloadBtn =
 document.getElementById("download");
-
-/* =====================================================
-UPDATE DISPLAY
-===================================================== */
 function updateDisplay(x, y, z) {
 accX.textContent =
 Number(x).toPrecision(15);
@@ -239,68 +222,34 @@ Number(y).toPrecision(15);
 accZ.textContent =
 Number(z).toPrecision(15);
 }
-
-/* =====================================================
-DEVICE MOTION EVENT
-===================================================== */
 function handleMotion(event) {
-/*
-PRINT COMPLETE EVENT
-TO BROWSER CONSOLE
-*/
 console.log("DeviceMotion Event:", event);
-
-/*
-ACCELERATION INCLUDING GRAVITY
-*/
 const a =
 event.accelerationIncludingGravity;
-
 if (!a) {
 console.log(
 "No accelerationIncludingGravity data"
 );
 return;
 }
-
-/*
-X
-*/
 latest.x =
 Number.isFinite(a.x)
 ? a.x
 : 0;
-
-/*
-Y
-*/
 latest.y =
 Number.isFinite(a.y)
 ? a.y
 : 0;
-
-/*
-Z
-*/
 latest.z =
 Number.isFinite(a.z)
 ? a.z
 : 0;
-
 gotSensorData = true;
-
-/*
-UPDATE SCREEN CONTINUOUSLY
-*/
 updateDisplay(
 latest.x,
 latest.y,
 latest.z
 );
-
-/*
-PRINT RAW VALUES
-*/
 console.log(
 "RAW ACC:",
 "X =", latest.x,
@@ -308,83 +257,50 @@ console.log(
 "Z =", latest.z
 );
 }
-
-/* =====================================================
-100 Hz LOGGER
-===================================================== */
 function addSample() {
 if (!logging) {
 return;
 }
-
-/*
-TIME IN MILLISECONDS
-*/
 const elapsedMs =
 performance.now() - startTime;
-
 const timeMs =
 elapsedMs.toFixed(2);
-
-/*
-ACCELERATION
-*/
 const x =
 String(latest.x);
 const y =
 String(latest.y);
 const z =
 String(latest.z);
-
-/*
-ADD CSV ROW
-*/
 csvRows.push(
 `${timeMs},${x},${y},${z}`
 );
-
 sampleCount++;
-
 sampleCountEl.textContent =
 sampleCount;
-
-/*
-DISPLAY FIRST 500 ROWS
-*/
 if (sampleCount <= 500) {
 const row =
 document.createElement("tr");
-
 row.innerHTML = `
 <td>${timeMs}</td>
 <td>${x}</td>
 <td>${y}</td>
 <td>${z}</td>
 `;
-
 dataTable.appendChild(row);
 }
-
 else if (sampleCount === 501) {
 dataTable.innerHTML = "";
-
 const row =
 document.createElement("tr");
-
 row.innerHTML = `
 <td colspan="4">
 Recording continues.
 Download CSV for all samples.
 </td>
 `;
-
 dataTable.appendChild(row);
 }
 }
-
-/* =====================================================
-SENSOR PERMISSION
-===================================================== */
 async function requestMotionPermission() {
 if (
 typeof DeviceMotionEvent ===
@@ -394,17 +310,12 @@ throw new Error(
 "This browser does not support device motion sensors."
 );
 }
-
-/*
-iPhone / iPad
-*/
 if (
 typeof DeviceMotionEvent.requestPermission ===
 "function"
 ) {
 const permission =
 await DeviceMotionEvent.requestPermission();
-
 if (permission !== "granted") {
 throw new Error(
 "Motion sensor permission was denied."
@@ -412,19 +323,11 @@ throw new Error(
 }
 }
 }
-
-/* =====================================================
-START LOGGING
-===================================================== */
 startBtn.addEventListener(
 "click",
 async () => {
 try {
 await requestMotionPermission();
-
-/*
-ADD SENSOR EVENT LISTENER
-*/
 if (!sensorRunning) {
 window.addEventListener(
 "devicemotion",
@@ -435,51 +338,30 @@ passive: true
 );
 sensorRunning = true;
 }
-
-/*
-RESET DATA
-*/
 csvRows = [];
 sampleCount = 0;
 sampleCountEl.textContent =
 "0";
 dataTable.innerHTML = "";
-
 latest = {
 x: 0,
 y: 0,
 z: 0
 };
-
 gotSensorData = false;
-
-/*
-START TIME
-*/
 startTime =
 performance.now();
-
 logging = true;
-
-/*
-100 Hz
-100 samples / second
-1 second = 1000 ms
-1000 / 100 = 10 ms
-*/
 logTimer =
 setInterval(
 addSample,
 10
 );
-
 startBtn.disabled = true;
 stopBtn.disabled = false;
 downloadBtn.disabled = true;
-
 statusEl.textContent =
 "Recording at 100 Hz...";
-
 console.log(
 "========== IMU LOGGING STARTED =========="
 );
@@ -501,30 +383,22 @@ error.message
 }
 }
 );
-
-/* =====================================================
-STOP LOGGING
-===================================================== */
 stopBtn.addEventListener(
 "click",
 () => {
 logging = false;
-
 if (logTimer !== null) {
 clearInterval(
 logTimer
 );
 logTimer = null;
 }
-
 startBtn.disabled = false;
 stopBtn.disabled = true;
 downloadBtn.disabled =
 csvRows.length === 0;
-
 statusEl.textContent =
 `Stopped — ${sampleCount} samples recorded`;
-
 console.log(
 "========== IMU LOGGING STOPPED =========="
 );
@@ -534,29 +408,17 @@ sampleCount
 );
 }
 );
-
-/* =====================================================
-DOWNLOAD CSV
-===================================================== */
 downloadBtn.addEventListener(
 "click",
 () => {
 if (csvRows.length === 0) {
 return;
 }
-
-/*
-CSV HEADER
-*/
 const csv =
 "Time (ms),X (m/s²),Y (m/s²),Z (m/s²)
 " +
 csvRows.join("
 ");
-
-/*
-CREATE FILE
-*/
 const blob =
 new Blob(
 [csv],
@@ -565,32 +427,21 @@ type:
 "text/csv;charset=utf-8"
 }
 );
-
 const url =
 URL.createObjectURL(blob);
-
 const link =
 document.createElement("a");
-
 link.href = url;
-
 link.download =
 `imu_raw_${new Date()
 .toISOString()
 .replace(/[:.]/g, "-")
 }.csv`;
-
 document.body.appendChild(
 link
 );
-
 link.click();
-
 link.remove();
-
-/*
-CORRECT FUNCTION
-*/
 setTimeout(
 () => {
 URL.revokeObjectURL(
@@ -599,16 +450,11 @@ url
 },
 1000
 );
-
 console.log(
 "CSV downloaded."
 );
 }
 );
-
-/* =====================================================
-CLEANUP
-===================================================== */
 window.addEventListener(
 "beforeunload",
 () => {
@@ -617,15 +463,12 @@ clearInterval(
 logTimer
 );
 }
-
 window.removeEventListener(
 "devicemotion",
 handleMotion
 );
 }
 );
-
-/* SENSOR RESOLUTION TEST */
 const resolutionStartBtn = document.getElementById("resolutionStart");
 const resolutionClearBtn = document.getElementById("resolutionClear");
 const resolutionSamplesEl = document.getElementById("resolutionSamples");
@@ -645,3 +488,106 @@ if (!a) return;
 if (Number.isFinite(a.x)) {
 resolutionData.x.push(a.x);
 resolutionXEl.textContent = Number(a.x).toPrecision(15);
+}
+if (Number.isFinite(a.y)) {
+resolutionData.y.push(a.y);
+resolutionYEl.textContent = Number(a.y).toPrecision(15);
+}
+if (Number.isFinite(a.z)) {
+resolutionData.z.push(a.z);
+resolutionZEl.textContent = Number(a.z).toPrecision(15);
+}
+resolutionSamplesEl.textContent = Math.max(
+resolutionData.x.length,
+resolutionData.y.length,
+resolutionData.z.length
+);
+updateResolutionEstimate();
+}
+function calculateResolution(values) {
+if (values.length < 10) return null;
+const sorted = values.filter(Number.isFinite).sort((a,b) => a-b);
+if (sorted.length < 10) return null;
+const tolerance = 0.000001;
+let smallest = Infinity;
+for (let i = 1; i < sorted.length; i++) {
+const d = Math.abs(sorted[i] - sorted[i-1]);
+if (d > tolerance && d < smallest) smallest = d;
+}
+return Number.isFinite(smallest) ? smallest : null;
+}
+function formatResolution(value) {
+if (value === null) return "--";
+return value >= 0.01 ? value.toFixed(4) : value.toPrecision(6);
+}
+function updateResolutionEstimate() {
+stepXEl.textContent = formatResolution(calculateResolution(resolutionData.x));
+stepYEl.textContent = formatResolution(calculateResolution(resolutionData.y));
+stepZEl.textContent = formatResolution(calculateResolution(resolutionData.z));
+}
+function startResolutionTest() {
+resolutionData = {x: [], y: [], z: []};
+resolutionSamplesEl.textContent = "0";
+resolutionXEl.textContent = "--";
+resolutionYEl.textContent = "--";
+resolutionZEl.textContent = "--";
+stepXEl.textContent = "--";
+stepYEl.textContent = "--";
+stepZEl.textContent = "--";
+resolutionRunning = true;
+resolutionStatusEl.textContent = "Testing... Keep the phone completely stationary.";
+window.addEventListener("devicemotion", resolutionMotionHandler);
+}
+function stopResolutionTest() {
+resolutionRunning = false;
+window.removeEventListener("devicemotion", resolutionMotionHandler);
+updateResolutionEstimate();
+resolutionStatusEl.textContent = "Test finished.";
+}
+function clearResolutionTest() {
+resolutionRunning = false;
+window.removeEventListener("devicemotion", resolutionMotionHandler);
+resolutionData = {x: [], y: [], z: []};
+resolutionSamplesEl.textContent = "0";
+resolutionXEl.textContent = "--";
+resolutionYEl.textContent = "--";
+resolutionZEl.textContent = "--";
+stepXEl.textContent = "--";
+stepYEl.textContent = "--";
+stepZEl.textContent = "--";
+resolutionStatusEl.textContent = "Press Start Resolution Test.";
+}
+resolutionStartBtn.addEventListener("click", function() {
+if (!resolutionRunning) {
+startResolutionTest();
+resolutionStartBtn.textContent = "Stop Resolution Test";
+} else {
+stopResolutionTest();
+resolutionStartBtn.textContent = "Start Resolution Test";
+}
+});
+resolutionClearBtn.addEventListener("click", function() {
+clearResolutionTest();
+resolutionStartBtn.textContent = "Start Resolution Test";
+});
+</script>
+<div id="resolutionTest" style="margin-top:20px;padding:15px;border:2px solid #333;border-radius:10px;font-family:Arial,sans-serif;">
+<h3 style="margin-top:0;">Sensor Resolution Test</h3>
+<p>Keep the phone completely stationary for 10–20 seconds. This test examines the raw values supplied by the browser.</p>
+<button id="resolutionStart" type="button">Start Resolution Test</button>
+<button id="resolutionClear" type="button">Clear</button>
+<div style="margin-top:12px;">
+<div>Samples: <span id="resolutionSamples">0</span></div>
+<div>Raw X: <span id="resolutionX">--</span></div>
+<div>Raw Y: <span id="resolutionY">--</span></div>
+<div>Raw Z: <span id="resolutionZ">--</span></div>
+<br>
+<div>Estimated X step: <b id="stepX">--</b> m/s²</div>
+<div>Estimated Y step: <b id="stepY">--</b> m/s²</div>
+<div>Estimated Z step: <b id="stepZ">--</b> m/s²</div>
+<br>
+<div id="resolutionStatus">Press Start Resolution Test.</div>
+</div>
+</div>
+</body>
+</html>
