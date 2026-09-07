@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
 <title>Raw IMU Accelerometer - 100 Hz Logger</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -127,9 +129,11 @@ th {
     max-height: 360px;
     overflow: auto;
 }
+
 </style>
 
 </head>
+
 
 <body>
 
@@ -147,7 +151,7 @@ th {
         <h2>X Axis</h2>
 
         <div class="value" id="accX">
-            0.00
+            0
         </div>
 
         <div class="unit">
@@ -162,7 +166,7 @@ th {
         <h2>Y Axis</h2>
 
         <div class="value" id="accY">
-            0.00
+            0
         </div>
 
         <div class="unit">
@@ -177,7 +181,7 @@ th {
         <h2>Z Axis</h2>
 
         <div class="value" id="accZ">
-            0.00
+            0
         </div>
 
         <div class="unit">
@@ -247,6 +251,7 @@ th {
 
 </thead>
 
+
 <tbody id="dataTable">
 </tbody>
 
@@ -256,6 +261,7 @@ th {
 
 
 <script>
+
 
 /* =====================================================
    VARIABLES
@@ -320,14 +326,19 @@ const downloadBtn =
 
 function updateDisplay(x, y, z) {
 
-    accX.textContent =
-        Number(x).toFixed(2);
+    /*
+       IMPORTANT:
+       Do NOT use toFixed() here.
 
-    accY.textContent =
-        Number(y).toFixed(2);
+       This displays the actual JavaScript
+       value received from the phone sensor.
+    */
 
-    accZ.textContent =
-        Number(z).toFixed(2);
+    accX.textContent = String(x);
+
+    accY.textContent = String(y);
+
+    accZ.textContent = String(z);
 
 }
 
@@ -337,18 +348,6 @@ function updateDisplay(x, y, z) {
 ===================================================== */
 
 function handleMotion(event) {
-
-    /*
-       PRINT COMPLETE EVENT
-       TO BROWSER CONSOLE
-    */
-
-    console.log("DeviceMotion Event:", event);
-
-
-    /*
-       ACCELERATION INCLUDING GRAVITY
-    */
 
     const a =
         event.accelerationIncludingGravity;
@@ -364,9 +363,7 @@ function handleMotion(event) {
     }
 
 
-    /*
-       X
-    */
+    /* X */
 
     latest.x =
         Number.isFinite(a.x)
@@ -374,9 +371,7 @@ function handleMotion(event) {
         : 0;
 
 
-    /*
-       Y
-    */
+    /* Y */
 
     latest.y =
         Number.isFinite(a.y)
@@ -384,9 +379,7 @@ function handleMotion(event) {
         : 0;
 
 
-    /*
-       Z
-    */
+    /* Z */
 
     latest.z =
         Number.isFinite(a.z)
@@ -397,9 +390,7 @@ function handleMotion(event) {
     gotSensorData = true;
 
 
-    /*
-       UPDATE SCREEN CONTINUOUSLY
-    */
+    /* UPDATE SCREEN */
 
     updateDisplay(
         latest.x,
@@ -410,6 +401,9 @@ function handleMotion(event) {
 
     /*
        PRINT RAW VALUES
+
+       These are the values received
+       directly from the sensor API.
     */
 
     console.log(
@@ -433,9 +427,7 @@ function addSample() {
     }
 
 
-    /*
-       TIME IN MILLISECONDS
-    */
+    /* TIME */
 
     const elapsedMs =
         performance.now() - startTime;
@@ -447,21 +439,25 @@ function addSample() {
 
     /*
        ACCELERATION
+
+       IMPORTANT:
+       No toFixed(2) here.
+
+       Store the raw value supplied by
+       the phone/browser.
     */
 
     const x =
-        latest.x.toFixed(2);
+        String(latest.x);
 
     const y =
-        latest.y.toFixed(2);
+        String(latest.y);
 
     const z =
-        latest.z.toFixed(2);
+        String(latest.z);
 
 
-    /*
-       ADD CSV ROW
-    */
+    /* ADD CSV ROW */
 
     csvRows.push(
         `${timeMs},${x},${y},${z}`
@@ -475,9 +471,7 @@ function addSample() {
         sampleCount;
 
 
-    /*
-       DISPLAY FIRST 500 ROWS
-    */
+    /* DISPLAY FIRST 500 ROWS */
 
     if (sampleCount <= 500) {
 
@@ -638,8 +632,6 @@ startBtn.addEventListener(
 
                100 samples / second
 
-               1 second = 1000 ms
-
                1000 / 100 = 10 ms
             */
 
@@ -752,18 +744,14 @@ downloadBtn.addEventListener(
         }
 
 
-        /*
-           CSV HEADER
-        */
+        /* CSV HEADER */
 
         const csv =
             "Time (ms),X (m/s²),Y (m/s²),Z (m/s²)\n" +
             csvRows.join("\n");
 
 
-        /*
-           CREATE FILE
-        */
+        /* CREATE FILE */
 
         const blob =
             new Blob(
@@ -803,10 +791,6 @@ downloadBtn.addEventListener(
 
         link.remove();
 
-
-        /*
-           CORRECT FUNCTION
-        */
 
         setTimeout(
             () => {
@@ -856,4 +840,5 @@ window.addEventListener(
 </script>
 
 </body>
+
 </html>
